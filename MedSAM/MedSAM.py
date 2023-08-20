@@ -260,13 +260,13 @@ class MedSAMWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     def onDeepGrowPointListNodeModified(self, observer, eventid):
         # TODO: prompt error when embedding calc isnt finished
-        
+
         # 1. get states
-        margin = 3 # grow bb outwards margin pxs, 3 is used during trainig
+        margin = 3  # grow bb outwards margin pxs, 3 is used during trainig
         points = self.getControlPointsXYZ(self.dgPositivePointListNode, "foreground")
         print(points)
-        tdm = self.ui.threeDModeButton.checked # 3d mode enabled
-        
+        tdm = self.ui.threeDModeButton.checked  # 3d mode enabled
+
         if len(points) not in (4, 6):
             return
 
@@ -280,7 +280,7 @@ class MedSAMWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
                 self.dgPositivePointListNode.RemoveAllControlPoints()
                 return
         print(len(points))
-        if tdm and len(points) == 4: # wait for 2 more
+        if tdm and len(points) == 4:  # wait for 2 more
             return
 
         bb_points = np.array(points)
@@ -290,10 +290,10 @@ class MedSAMWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         ymin = max(min(bb_points[:, 0]) - 3, 0)
         ymax = min(max(bb_points[:, 0]) + 3, self.H)
         # print(xmin, ymin, xmax, ymax)
-        
+
         zrange = min(bb_points[:, 2]), max(bb_points[:, 2])
         print(zrange)
-        
+
         # try:
         tms = lambda it: list(map(str, it))
         print(tms((xmin, ymin, xmax, ymax)), tms(zrange))
@@ -302,7 +302,7 @@ class MedSAMWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
             json={
                 "slice_idx": str(slice_idx),
                 "bbox": tms((xmin, ymin, xmax, ymax)),
-                "zrange": tms(zrange)
+                "zrange": tms(zrange),
             },
         )
 
@@ -312,7 +312,7 @@ class MedSAMWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
         )
         masks = json.loads(resp.json())
         for sidx, mask in masks.items():
-            mask = np.transpose(np.asarray(mask), (1, 0))  
+            mask = np.transpose(np.asarray(mask), (1, 0))
             print(int(sidx), mask.shape)
 
             curr_mask[int(sidx)] |= mask
